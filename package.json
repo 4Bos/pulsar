@@ -1,0 +1,27 @@
+{
+  "name": "pulsar",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4Bos/pulsar.git"
+  },
+  "author": "Konstantin Veselovsky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/4Bos/pulsar/issues"
+  },
+  "homepage": "https://github.com/4Bos/pulsar#readme",
+  "dependencies": {
+    "ssh2": "^1.16.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@types/ssh2": "^1.15.4",
+    "testcontainers": "^11.5.1",
+    "vitest": "^3.2.4"
+  }
+}
