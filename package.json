@@ -15,6 +15,7 @@
   },
   "homepage": "https://github.com/4Bos/pulsar#readme",
   "dependencies": {
+    "dotenv": "^17.2.2",
     "ssh2": "^1.16.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
