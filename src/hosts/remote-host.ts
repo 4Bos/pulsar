@@ -1,4 +1,4 @@
-import { Host, CommandResult, CommandOptions } from "./host";
+import {Host, CommandResult, CommandOptions, UploadFileOptions} from "./host";
 import {Client} from "ssh2";
 
 export class RemoteHost extends Host {
@@ -13,20 +13,50 @@ export class RemoteHost extends Host {
 
     async command(options: CommandOptions): Promise<CommandResult> {
         return new Promise<CommandResult>((resolve) => {
-            const conn = new Client();
-
-            conn.on('ready', async () => {
+            this.connect(async conn => {
                 const result = await command(conn, options);
 
                 conn.end();
 
                 resolve(result);
-            }).connect({
-                host: this.host,
-                port: this.port,
-                username: this.user,
-                password: this.pass,
             });
+        });
+    }
+
+    async uploadFile(options: UploadFileOptions) {
+        return new Promise<void>((resolve, reject) => {
+            this.connect(async conn => {
+                conn.sftp((error, sftp) => {
+                    if (error) {
+                        conn.end();
+
+                        reject(error);
+                        return;
+                    }
+
+                    sftp.fastPut(options.localPath, options.remotePath, function(error) {
+                        if (error) {
+                            reject(error);
+                            return;
+                        }
+
+                        conn.end();
+
+                        resolve();
+                    });
+                });
+            });
+        });
+    }
+
+    protected connect(callback: (connection: Client) => void) {
+        const conn = new Client();
+
+        conn.on('ready', async () => callback(conn)).connect({
+            host: this.host,
+            port: this.port,
+            username: this.user,
+            password: this.pass,
         });
     }
 }

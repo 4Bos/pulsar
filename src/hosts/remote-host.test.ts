@@ -1,4 +1,4 @@
-import {expect, it} from 'vitest'
+import {describe, expect, it} from 'vitest'
 import {prepareHost} from "../testing";
 
 const createHost = prepareHost();
@@ -35,4 +35,21 @@ it('should handle failed command execution correctly', async () => {
     expect(1).toBe(result.code);
     expect('').toBe(result.stdout);
     expect('Error').toBe(result.stderr);
+});
+
+describe('uploadFile method', () => {
+    it('should successfully upload file', async () => {
+        const remote = createHost();
+
+        await remote.uploadFile({
+            localPath: __dirname + '/../../.gitignore',
+            remotePath: '/tmp/test-file',
+        });
+
+        const result = await remote.command({
+            command: 'test -f /tmp/test-file',
+        });
+
+        expect(0).toBe(result.code);
+    });
 });
