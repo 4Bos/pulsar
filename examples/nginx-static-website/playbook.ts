@@ -3,6 +3,7 @@ import {aptInstall} from "../../src/modules/apt";
 import {task} from "../../src/task";
 import {serviceRestart} from "../../src/modules/service";
 import {configDotenv} from "dotenv";
+import {file} from "../../src/modules/file";
 
 configDotenv({path: __dirname + '/.env', quiet: true});
 
@@ -35,12 +36,10 @@ async function play() {
     );
 
     await task('install nginx', aptInstall(host, {packages: ['nginx']}));
-
-    await host.uploadFile({
+    await task('upload index.html', file.upload(host, {
         localPath: __dirname + '/html/index.html',
         remotePath: '/var/www/html/index.html',
-    });
-
+    }));
     await task('restart nginx', serviceRestart(host, {name: 'nginx'}));
 }
 
