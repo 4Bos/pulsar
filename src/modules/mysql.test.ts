@@ -3,11 +3,10 @@ import {prepareHost} from "../testing";
 import {mysql} from "./mysql";
 import {singleQuotedStr} from "../bash";
 
-const createHost = prepareHost();
+const createHost = prepareHost('4bos/pulsar:mysql-0.1');
 
 it('should successfully create the database', async () => {
     const host = createHost();
-    await host.command({command: 'apt-get install -y mysql-server && service mysql start'});
     const result = await mysql.createDatabase(host, 'test');
 
     expect(false).toBe(result.failed);
@@ -15,7 +14,6 @@ it('should successfully create the database', async () => {
 
 it('should return an error if the database being created already exists', async () => {
     const host = createHost();
-    await host.command({command: 'apt-get install -y mysql-server && service mysql start'});
     await mysql.createDatabase(host, 'test');
     const result = await mysql.createDatabase(host, 'test');
 
@@ -25,7 +23,6 @@ it('should return an error if the database being created already exists', async 
 describe('createUser method', () => {
     it('should successfully create the user', async () => {
         const host = createHost();
-        await host.command({command: 'apt-get install -y mysql-server && service mysql start'});
         const result = await mysql.createUser(host, {
             username: 'test',
             password: '123456',
