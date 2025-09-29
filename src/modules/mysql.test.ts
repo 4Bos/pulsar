@@ -36,3 +36,24 @@ describe('createUser method', () => {
         expect(0).toBe(loginResult.code);
     }, 60 * 1000);
 });
+
+describe('grantPrivilege method', () => {
+    it('should successfully grand specified privilege', async () => {
+        const host = createHost();
+
+        await mysql.createDatabase(host, 'test');
+        await mysql.createUser(host, {
+            username: 'test',
+            password: '123456',
+            host: '%',
+        });
+
+        const result = await mysql.grantPrivilege(host, {
+            user: '\'test\'@\'%\'',
+            type: 'ALL PRIVILEGES',
+            level: 'test.*',
+        });
+
+        expect(false).toBe(result.failed);
+    }, 60 * 1000);
+});
