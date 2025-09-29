@@ -2,7 +2,7 @@ import {expect, it} from "vitest";
 import {aptInstall} from "./apt";
 import {prepareHost} from "../testing";
 
-const createHost = prepareHost();
+const createHost = prepareHost('4bos/pulsar:ssh-0.1');
 
 it('should successfully install the package', async () => {
     const host = createHost();

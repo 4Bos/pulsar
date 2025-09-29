@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest'
 import {prepareHost} from "../testing";
 
-const createHost = prepareHost();
+const createHost = prepareHost('4bos/pulsar:ssh-0.1');
 
 describe('command method', () => {
     it('should execute successful command and return correct output', async () => {

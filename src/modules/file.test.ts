@@ -2,7 +2,7 @@ import {expect, it} from "vitest";
 import {prepareHost} from "../testing";
 import {file} from "./file";
 
-const createHost = prepareHost();
+const createHost = prepareHost('4bos/pulsar:ssh-0.1');
 
 it('should successfully upload file', async () => {
     const host = createHost();
