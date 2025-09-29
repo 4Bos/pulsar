@@ -1,4 +1,5 @@
 export interface TaskResult {
+    changed: boolean;
     failed: boolean;
     error?: string;
 }
@@ -28,6 +29,8 @@ export async function task(name: string, taskObject: Promise<TaskResult>) {
 
     if (result.failed) {
         process.stdout.write('\r\x1b[1;31m[ ] ' + name + '\x1b[0m (' + getElapsedTime() + ')\n');
+    } else if (result.changed) {
+        process.stdout.write('\r\x1b[38;5;178m[x] ' + name + '\x1b[0m (' + getElapsedTime() + ')\n');
     } else {
         process.stdout.write('\r\x1b[1;32m[x] ' + name + '\x1b[0m (' + getElapsedTime() + ')\n');
     }

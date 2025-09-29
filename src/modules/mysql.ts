@@ -19,6 +19,7 @@ export const mysql = {
         const result = await host.command({command: 'mysql -e \'CREATE DATABASE ' + name + ';\''});
 
         return {
+            changed: result.code === 0,
             failed: result.code !== 0,
         };
     },
@@ -29,6 +30,7 @@ export const mysql = {
         });
 
         return {
+            changed: result.code === 0,
             failed: result.code !== 0,
         };
     },
@@ -39,6 +41,7 @@ export const mysql = {
         });
 
         return {
+            changed: result.code === 0,
             failed: result.code !== 0,
         };
     }

@@ -11,6 +11,7 @@ export async function serviceRestart(host: Host, options: Options): Promise<Task
     });
 
     return {
+        changed: result.code === 0,
         failed: result.code !== 0,
     };
 }

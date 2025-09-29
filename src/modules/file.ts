@@ -12,6 +12,7 @@ export const file = {
     upload: async (host: Host, options: Options): Promise<TaskResult> => {
         if (!fs.existsSync(options.localPath)) {
             return {
+                changed: false,
                 failed: true,
                 error: 'local file does not exist',
             };
@@ -21,6 +22,7 @@ export const file = {
 
         if (result.code !== 0) {
             return {
+                changed: false,
                 failed: true,
                 error: 'remote directory does not exist',
             };
@@ -29,6 +31,7 @@ export const file = {
         await host.uploadFile(options);
 
         return {
+            changed: true,
             failed: false,
         };
     },

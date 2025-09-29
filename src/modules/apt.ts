@@ -19,6 +19,7 @@ export async function aptInstall(host: Host, options: Options): Promise<TaskResu
 
             if (result.code !== 0) {
                 return {
+                    changed: false,
                     failed: true,
                 };
             }
@@ -30,12 +31,14 @@ export async function aptInstall(host: Host, options: Options): Promise<TaskResu
 
         if (result.code !== 0) {
             return {
+                changed: false,
                 failed: true,
             };
         }
     }
 
     return {
+        changed: true,
         failed: false,
     };
 }
