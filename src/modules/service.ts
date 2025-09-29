@@ -1,14 +1,11 @@
 import {Host} from "../hosts/host";
+import {TaskResult} from "../task";
 
 export interface Options {
     name: string;
 }
 
-export interface Result {
-    failed: boolean;
-}
-
-export async function serviceRestart(host: Host, options: Options): Promise<Result> {
+export async function serviceRestart(host: Host, options: Options): Promise<TaskResult> {
     const result = await host.command({
         command: 'service ' + options.name + ' restart',
     });

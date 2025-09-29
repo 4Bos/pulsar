@@ -1,9 +1,6 @@
 import {Host} from "../hosts/host";
 import {singleQuotedStr} from "../bash";
-
-export interface Result {
-    failed: boolean;
-}
+import {TaskResult} from "../task";
 
 export interface CreateUserOptions {
     username: string;
@@ -18,7 +15,7 @@ export interface GrandPrivilegeOptions {
 }
 
 export const mysql = {
-    createDatabase: async (host: Host, name: string): Promise<Result> => {
+    createDatabase: async (host: Host, name: string): Promise<TaskResult> => {
         const result = await host.command({command: 'mysql -e \'CREATE DATABASE ' + name + ';\''});
 
         return {
@@ -26,7 +23,7 @@ export const mysql = {
         };
     },
 
-    createUser: async (host: Host, options: CreateUserOptions): Promise<Result> => {
+    createUser: async (host: Host, options: CreateUserOptions): Promise<TaskResult> => {
         const result = await host.command({
             command: 'mysql -e ' + singleQuotedStr('CREATE USER \'' + options.username + '\'@\'' + options.host + '\' IDENTIFIED BY \'' + options.password + '\';'),
         });
@@ -36,7 +33,7 @@ export const mysql = {
         };
     },
 
-    grantPrivilege: async (host: Host, options: GrandPrivilegeOptions): Promise<Result> => {
+    grantPrivilege: async (host: Host, options: GrandPrivilegeOptions): Promise<TaskResult> => {
         const result = await host.command({
             command: 'mysql -e ' + singleQuotedStr('GRANT ' + options.type + ' ON ' + options.level + ' TO ' + options.user + ';'),
         });

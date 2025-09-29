@@ -1,14 +1,11 @@
 import {Host} from "../hosts/host";
+import {TaskResult} from "../task";
 
 export interface Options {
     packages: string[];
 }
 
-export interface Result {
-    failed: boolean;
-}
-
-export async function aptInstall(host: Host, options: Options): Promise<Result> {
+export async function aptInstall(host: Host, options: Options): Promise<TaskResult> {
     for (let i = 0; i < options.packages.length; i++) {
         const pkg = options.packages[i];
         let result = await host.command({

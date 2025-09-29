@@ -1,19 +1,15 @@
 import {Host} from "../hosts/host";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import {TaskResult} from "../task";
 
 export interface Options {
     localPath: string;
     remotePath: string;
 }
 
-export interface Result {
-    failed: boolean;
-    error?: string;
-}
-
 export const file = {
-    upload: async (host: Host, options: Options): Promise<Result> => {
+    upload: async (host: Host, options: Options): Promise<TaskResult> => {
         if (!fs.existsSync(options.localPath)) {
             return {
                 failed: true,

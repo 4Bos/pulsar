@@ -1,6 +1,9 @@
-import {Result} from "./modules/apt";
+export interface TaskResult {
+    failed: boolean;
+    error?: string;
+}
 
-export async function task(name: string, taskObject: Promise<Result>) {
+export async function task(name: string, taskObject: Promise<TaskResult>) {
     const start = process.hrtime.bigint();
     const getElapsedTime = () => {
         const current = process.hrtime.bigint();
