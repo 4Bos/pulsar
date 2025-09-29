@@ -1,7 +1,14 @@
 import {Host} from "../hosts/host";
+import {singleQuotedStr} from "../bash";
 
 export interface Result {
     failed: boolean;
+}
+
+export interface CreateUserOptions {
+    username: string;
+    password: string;
+    host: string;
 }
 
 export const mysql = {
@@ -12,4 +19,14 @@ export const mysql = {
             failed: result.code !== 0,
         };
     },
+
+    createUser: async (host: Host, options: CreateUserOptions): Promise<Result> => {
+        const result = await host.command({
+            command: 'mysql -e ' + singleQuotedStr('CREATE USER \'' + options.username + '\'@\'' + options.host + '\' IDENTIFIED BY \'' + options.password + '\';'),
+        });
+
+        return {
+            failed: result.code !== 0,
+        };
+    }
 };

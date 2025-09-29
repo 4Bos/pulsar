@@ -1,6 +1,7 @@
-import {expect, it} from "vitest";
+import {describe, expect, it} from "vitest";
 import {prepareHost} from "../testing";
 import {mysql} from "./mysql";
+import {singleQuotedStr} from "../bash";
 
 const createHost = prepareHost();
 
@@ -20,3 +21,21 @@ it('should return an error if the database being created already exists', async 
 
     expect(true).toBe(result.failed);
 }, 60 * 1000);
+
+describe('createUser method', () => {
+    it('should successfully create the user', async () => {
+        const host = createHost();
+        await host.command({command: 'apt-get install -y mysql-server && service mysql start'});
+        const result = await mysql.createUser(host, {
+            username: 'test',
+            password: '123456',
+            host: '%',
+        });
+
+        expect(false).toBe(result.failed);
+
+        const loginResult = await host.command({command: 'mysql --user=test --password=123456 -N -e ' + singleQuotedStr('\\q')});
+
+        expect(0).toBe(loginResult.code);
+    }, 60 * 1000);
+});
