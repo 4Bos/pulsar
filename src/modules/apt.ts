@@ -12,17 +12,22 @@ export async function aptInstall(host: Host, options: Options): Promise<TaskResu
             command: 'dpkg -l ' + pkg + ' | grep "^ii"',
         });
 
-        if (result.code === 1) {
-            result = await host.command({
-                command: 'apt-get install -y ' + pkg,
-            });
+        if (result.code === 0) {
+            return {
+                changed: false,
+                failed: false,
+            };
+        }
 
-            if (result.code !== 0) {
-                return {
-                    changed: false,
-                    failed: true,
-                };
-            }
+        result = await host.command({
+            command: 'apt-get install -y ' + pkg,
+        });
+
+        if (result.code !== 0) {
+            return {
+                changed: false,
+                failed: true,
+            };
         }
 
         result = await host.command({
