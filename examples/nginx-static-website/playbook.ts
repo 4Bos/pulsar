@@ -43,4 +43,12 @@ async function play() {
     await task('restart nginx', serviceRestart(host, {name: 'nginx'}));
 }
 
-play().then();
+play().catch(error => {
+    if (error instanceof Error) {
+        const message = error.message.replace(/\n/g, '\n |  ');
+
+        console.error('\x1b[1;31m |  ' + message + '\x1b[0m');
+    } else {
+        throw error;
+    }
+});

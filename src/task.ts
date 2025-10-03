@@ -29,6 +29,8 @@ export async function task(name: string, taskObject: Promise<TaskResult>) {
 
     if (result.failed) {
         process.stdout.write('\r\x1b[1;31m[ ] ' + name + '\x1b[0m (' + getElapsedTime() + ')\n');
+
+        throw new Error(result.error || 'Undefined error.');
     } else if (result.changed) {
         process.stdout.write('\r\x1b[38;5;178m[x] ' + name + '\x1b[0m (' + getElapsedTime() + ')\n');
     } else {
