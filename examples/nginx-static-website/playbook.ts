@@ -4,6 +4,7 @@ import {task} from "../../src/task";
 import {serviceRestart} from "../../src/modules/service";
 import {configDotenv} from "dotenv";
 import {file} from "../../src/modules/file";
+import {Player} from "../../src/player";
 
 configDotenv({path: __dirname + '/.env', quiet: true});
 
@@ -27,7 +28,7 @@ const options = {
     pass: process.env.SERVER_PASS,
 };
 
-async function play() {
+Player.create(async () => {
     const host = new RemoteHost(
         options.host,
         options.port,
@@ -41,14 +42,4 @@ async function play() {
         remotePath: '/var/www/html/index.html',
     }));
     await task('restart nginx', serviceRestart(host, {name: 'nginx'}));
-}
-
-play().catch(error => {
-    if (error instanceof Error) {
-        const message = error.message.replace(/\n/g, '\n |  ');
-
-        console.error('\x1b[1;31m |  ' + message + '\x1b[0m');
-    } else {
-        throw error;
-    }
-});
+}).play();
