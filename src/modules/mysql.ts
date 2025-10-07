@@ -2,6 +2,11 @@ import {Host} from "../hosts/host";
 import {singleQuotedStr} from "../bash";
 import {TaskResult} from "../task";
 
+export interface CreateDatabaseOptions {
+    name: string;
+    encoding?: string;
+}
+
 export interface CreateUserOptions {
     username: string;
     password: string;
@@ -15,7 +20,9 @@ export interface GrandPrivilegeOptions {
 }
 
 export const mysql = {
-    createDatabase: async (host: Host, name: string): Promise<TaskResult> => {
+    createDatabase: async (host: Host, nameOrOptions: CreateDatabaseOptions|string): Promise<TaskResult> => {
+        let name = (typeof nameOrOptions === 'string') ? nameOrOptions : nameOrOptions.name;
+
         const result = await host.command({command: 'mysql -e \'CREATE DATABASE ' + name + ';\''});
 
         return {

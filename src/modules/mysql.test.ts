@@ -20,6 +20,21 @@ it('should return an error if the database being created already exists', async 
     expect(true).toBe(result.failed);
 }, 60 * 1000);
 
+it('should create database with specified encoding', async () => {
+    const dbName = 'db_with_encoding';
+    const host = createHost();
+    const result = await mysql.createDatabase(host, {name: dbName, encoding: 'utf8mb4'});
+
+    // Assert
+    expect(false).toBe(result.failed);
+
+    const query = 'SELECT DEFAULT_CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = \'' + dbName + '\';';
+    const commandResult =  await host.command({command: 'mysql -N -e ' + singleQuotedStr(query)});
+
+    expect(0).toBe(commandResult.code);
+    expect('utf8mb4', commandResult.stdout.trim());
+}, 60 * 1000);
+
 describe('createUser method', () => {
     it('should successfully create the user', async () => {
         const host = createHost();
