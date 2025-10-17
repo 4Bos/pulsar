@@ -5,17 +5,25 @@ import {TaskResult} from "../task";
 export interface InstallPackageOptions {
     name: string;
     version?: string;
+    global?: boolean;
 }
 
 export const npm = {
     installPackage: async (host: Host, nameOrOptions: InstallPackageOptions|string): Promise<TaskResult> => {
         let packageSpec = typeof nameOrOptions === 'string' ? nameOrOptions : nameOrOptions.name;
+        let globalFlag = '';
 
-        if (typeof nameOrOptions !== 'string' && nameOrOptions.version) {
-            packageSpec += '@' + nameOrOptions.version;
+        if (typeof nameOrOptions !== 'string') {
+            if (nameOrOptions.version) {
+                packageSpec += '@' + nameOrOptions.version;
+            }
+
+            if (nameOrOptions.global) {
+                globalFlag += ' -g'
+            }
         }
-        
-        const result = await host.command({command: 'npm install ' + singleQuotedStr(packageSpec)});
+
+        const result = await host.command({command: 'npm' + globalFlag + ' install ' + singleQuotedStr(packageSpec)});
 
         return {
             changed: result.code === 0,

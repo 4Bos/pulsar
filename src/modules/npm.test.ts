@@ -23,6 +23,19 @@ describe('installPackage method', () => {
         
         const getInstalledVersion = await host.command({command: 'npm list --depth=0 gulp | grep gulp'});
         expect(true).toBe(/(\W|^)gulp@4\.0\.0(\W|$)/.test(getInstalledVersion.stdout));
-    }, 60 * 1000)
+    }, 60 * 1000);
+
+    it('should install global package', async () => {
+        const host = createHost();
+        const result = await npm.installPackage(host, {
+            name: 'gulp',
+            global: true,
+        });
+    
+        expect(false).toBe(result.failed);
+        
+        const checkInstallationResult = await host.command({command: 'npm -g list --depth=0 gulp | grep gulp'});
+        expect(true).toBe(/(\W|^)gulp@/.test(checkInstallationResult.stdout));
+    }, 60 * 1000); 
 });
 
