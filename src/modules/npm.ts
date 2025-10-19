@@ -11,25 +11,21 @@ export interface InstallPackageOptions {
 
 export const npm = {
     installPackage: async (host: Host, nameOrOptions: InstallPackageOptions|string): Promise<TaskResult> => {
-        let packageSpec = typeof nameOrOptions === 'string' ? nameOrOptions : nameOrOptions.name;
-        let globalFlag = '';
-        let cd = '';
+        const options = typeof nameOrOptions === 'string' ? {name: nameOrOptions} : nameOrOptions;
+        let packageSpec = options.name;
 
-        if (typeof nameOrOptions !== 'string') {
-            if (nameOrOptions.version) {
-                packageSpec += '@' + nameOrOptions.version;
-            }
-
-            if (nameOrOptions.global) {
-                globalFlag += ' -g'
-            }
-
-            if (nameOrOptions.path) {
-                cd = 'cd ' + singleQuotedStr(nameOrOptions.path) + ' && ';
-            }
+        if (options.version) {
+            packageSpec += '@' + options.version;
         }
 
-        const result = await host.command({command: cd + 'npm' + globalFlag + ' install ' + singleQuotedStr(packageSpec)});
+        if (await checkIfPackageInstalled(host, options)) {
+            return {
+                changed: false,
+                failed: false,
+            };
+        }
+
+        const result = await exec(host, 'install ' + singleQuotedStr(packageSpec), options);
 
         return {
             changed: result.code === 0,
@@ -37,3 +33,37 @@ export const npm = {
         };
     },
 };
+
+async function exec(host: Host, command: string, options: InstallPackageOptions) {
+    let packageSpec = options.name;
+    let globalFlag = '';
+    let cd = '';
+
+    if (options.version) {
+        packageSpec += '@' + options.version;
+    }
+
+    if (options.global) {
+        globalFlag += ' -g'
+    }
+
+    if (options.path) {
+        cd = 'cd ' + singleQuotedStr(options.path) + ' && ';
+    }
+
+    return host.command({command: cd + 'npm' + globalFlag + ' ' + command});
+}
+
+async function checkIfPackageInstalled(host: Host, options: InstallPackageOptions) {
+    const result = await exec(host, 'list --json', options);
+    if (result.code !== 0) {
+        // TODO: throw error;
+    }
+
+    const listJson = JSON.parse(result.stdout);
+    if (listJson['dependencies'] && listJson['dependencies'][options.name]) {
+        return true;
+    }
+
+    return false;
+}
