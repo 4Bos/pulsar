@@ -36,6 +36,18 @@ describe('installPackage method', () => {
         
         const checkInstallationResult = await host.command({command: 'npm -g list --depth=0 gulp | grep gulp'});
         expect(true).toBe(/(\W|^)gulp@/.test(checkInstallationResult.stdout));
-    }, 60 * 1000); 
+    }, 60 * 1000);
+
+    it('should install the package in the specified path', async () => {
+        const host = createHost();
+        await host.command({command: 'mkdir -p /apps/test'});
+
+        const result = await npm.installPackage(host, {name: 'gulp', path: '/apps/test'});
+    
+        expect(false).toBe(result.failed);
+        
+        const checkInstallationResult = await host.command({command: 'cd /apps/test && npm list --depth=0 gulp | grep gulp'});
+        expect(true).toBe(/(\W|^)gulp@/.test(checkInstallationResult.stdout));
+    }, 60 * 1000);
 });
 
