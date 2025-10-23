@@ -1,8 +1,8 @@
 import {Host} from "../hosts/host";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as crypto from "node:crypto";
 import {TaskResult} from "../task";
+import { sha256file, sha256string } from "../crypto";
 
 export type UploadOptions = {
     remotePath: string;
@@ -55,7 +55,7 @@ export const file = {
                 };
             }
         }
-        
+
         await host.uploadFile(options);
 
         return {
@@ -214,22 +214,3 @@ export const file = {
         }
     },
 };
-
-async function sha256string(content: string): Promise<string> {
-    return crypto.createHash('sha256')
-        .update(content)
-        .digest('hex');
-}
-
-async function sha256file(filename: string): Promise<string> {
-    const stream = fs.createReadStream(filename);
-
-    let data = '';
-    for await (const chunk of stream) {
-        data += chunk;
-    }
-
-    return crypto.createHash('sha256')
-        .update(data)
-        .digest('hex');
-}
