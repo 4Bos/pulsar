@@ -4,9 +4,12 @@ import * as path from "node:path";
 import * as crypto from "node:crypto";
 import {TaskResult} from "../task";
 
-export interface Options {
-    localPath: string;
+export type UploadOptions = {
     remotePath: string;
+    localPath: string;
+} | {
+    remotePath: string;
+    content: string;
 }
 
 export interface CreateDirectoryOptions {
@@ -18,8 +21,8 @@ export interface CreateDirectoryOptions {
 }
 
 export const file = {
-    upload: async (host: Host, options: Options): Promise<TaskResult> => {
-        if (!fs.existsSync(options.localPath)) {
+    upload: async (host: Host, options: UploadOptions): Promise<TaskResult> => {
+        if ('localPath' in options && !fs.existsSync(options.localPath)) {
             return {
                 changed: false,
                 failed: true,
@@ -41,14 +44,18 @@ export const file = {
             const calcHashResult = await host.command({command: 'sha256sum ' + options.remotePath});
             const hash = calcHashResult.stdout.trim().split(/ +/)[0];
 
-            if (calcHashResult.code === 0 && hash === await sha256(options.localPath)) {
+            const originalHash = 'content' in options 
+                ? await sha256string(options.content)
+                : await sha256file(options.localPath);
+
+            if (calcHashResult.code === 0 && hash === originalHash) {
                 return {
                     changed: false,
                     failed: false,
                 };
             }
         }
-
+        
         await host.uploadFile(options);
 
         return {
@@ -208,7 +215,13 @@ export const file = {
     },
 };
 
-async function sha256(filename: string): Promise<string> {
+async function sha256string(content: string): Promise<string> {
+    return crypto.createHash('sha256')
+        .update(content)
+        .digest('hex');
+}
+
+async function sha256file(filename: string): Promise<string> {
     const stream = fs.createReadStream(filename);
 
     let data = '';

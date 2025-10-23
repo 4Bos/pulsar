@@ -34,16 +34,30 @@ export class RemoteHost extends Host {
                         return;
                     }
 
-                    sftp.fastPut(options.localPath, options.remotePath, function(error) {
-                        if (error) {
-                            reject(error);
-                            return;
-                        }
+                    if ('content' in options) {
+                        sftp.writeFile(options.remotePath, options.content, (error) => {
+                            if (error) {
+                                reject(error);
+                                return;
+                            }
+    
+                            conn.end();
+    
+                            resolve();
+                        });
 
-                        conn.end();
-
-                        resolve();
-                    });
+                    } else {
+                        sftp.fastPut(options.localPath, options.remotePath, function(error) {
+                            if (error) {
+                                reject(error);
+                                return;
+                            }
+    
+                            conn.end();
+    
+                            resolve();
+                        });
+                    }
                 });
             });
         });

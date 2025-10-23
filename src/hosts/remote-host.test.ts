@@ -54,4 +54,20 @@ describe('uploadFile method', () => {
 
         expect(0).toBe(result.code);
     });
+
+    it('should upload file with specified content', async () => {
+        const remote = createHost();
+
+        await remote.uploadFile({
+            remotePath: '/tmp/test-file2',
+            content: 'Hello world!',
+        });
+
+        const result = await remote.command({
+            command: 'cat /tmp/test-file2',
+        });
+
+        expect(result.code).toBe(0);
+        expect(result.stdout).toBe('Hello world!');
+    }, 60 * 1000);
 });

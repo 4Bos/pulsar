@@ -15,7 +15,10 @@ export interface CommandOptions {
     cwd?: string;
 }
 
-export interface UploadFileOptions {
+export type UploadFileOptions = {
     remotePath: string;
     localPath: string;
+} | {
+    remotePath: string;
+    content: string;
 }
