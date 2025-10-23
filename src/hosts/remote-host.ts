@@ -11,7 +11,11 @@ export class RemoteHost extends Host {
         super();
     }
 
-    async command(options: CommandOptions): Promise<CommandResult> {
+    async command(optionsOrCommand: CommandOptions|string): Promise<CommandResult> {
+        const options = typeof optionsOrCommand === 'string'
+            ? {command: optionsOrCommand}
+            : optionsOrCommand;
+
         return new Promise<CommandResult>((resolve) => {
             this.connect(async conn => {
                 const result = await command(conn, options);

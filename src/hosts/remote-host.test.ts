@@ -15,6 +15,15 @@ describe('command method', () => {
         expect('').toBe(result.stderr);
     });
 
+    it('should execute command specified as string', async () => {
+        const remote = createHost();
+        const result = await remote.command('cat /test/text');
+
+        expect(result.code).toBe(0);
+        expect(result.stdout).toBe('Pulsar here');
+        expect(result.stderr).toBe('');
+    });
+
     it('should execute command in specified working directory', async () => {
         const remote = createHost();
         const result = await remote.command({

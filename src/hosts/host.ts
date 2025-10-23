@@ -1,5 +1,5 @@
 export abstract class Host {
-    abstract command(options: CommandOptions): Promise<CommandResult>;
+    abstract command(optionsOrCommand: CommandOptions|string): Promise<CommandResult>;
 
     abstract uploadFile(options: UploadFileOptions): Promise<void>;
 }
